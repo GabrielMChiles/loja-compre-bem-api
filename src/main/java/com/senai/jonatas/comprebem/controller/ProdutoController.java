@@ -5,6 +5,9 @@ import com.senai.jonatas.comprebem.dto.ProdutoResponseDTO;
 import com.senai.jonatas.comprebem.service.ProdutoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,8 +31,10 @@ public class ProdutoController {
     }
 
     @GetMapping("/filtro")
-    public List<ProdutoResponseDTO> findByFiltro(String filtro) {
-        return produtoService.findByFiltro(filtro);
+    public Page<ProdutoResponseDTO> findByFiltro(
+            String filtro,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return produtoService.findByFiltro(filtro, pageable);
     }
 
     @PostMapping
