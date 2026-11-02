@@ -6,6 +6,7 @@ import com.senai.jonatas.comprebem.service.ProdutoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,16 @@ public class ProdutoController {
     public Page<ProdutoResponseDTO> findByFiltro(
             @RequestParam(defaultValue = "") String filtro,
             @PageableDefault(size = 20, sort = "nome") Pageable pageable) {
-        return produtoService.findByFiltro(filtro, pageable);
+
+        // Blindagem de Segurança: Impede estritamente que o tamanho exceda 50 itens
+        int tamanhoMaximo = Math.min(pageable.getPageSize(), 50);
+        Pageable pageableSeguro = PageRequest.of(
+                pageable.getPageNumber(),
+                tamanhoMaximo,
+                pageable.getSort()
+        );
+
+        return produtoService.findByFiltro(filtro, pageableSeguro);
     }
 
     @PostMapping
