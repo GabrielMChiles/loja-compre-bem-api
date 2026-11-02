@@ -13,12 +13,12 @@ import java.util.UUID;
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, UUID> {
 
-    @Query("SELECT p FROM Produto p WHERE p.nome LIKE %:filtro% OR p.descricao LIKE %:filtro%")
-    List<Produto> findByFiltro(String filtro);
-
-
     @Query("""
-            SELECT p FROM Produto p WHERE p.nome LIKE %:filtro% OR p.descricao LIKE %:filtro%
+            SELECT p 
+                        FROM Produto p 
+                        WHERE UPPER(p.nome) LIKE %:filtro% 
+                                    OR UPPER(p.descricao) LIKE %:filtro%
             """)
     Page<Produto> findByFiltro(String filtro, Pageable pageable);
+
 }

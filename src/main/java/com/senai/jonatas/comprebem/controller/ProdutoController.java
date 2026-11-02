@@ -16,6 +16,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping(value = "api/v1/produtos")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class ProdutoController {
 
     private final ProdutoService produtoService;
@@ -26,14 +27,14 @@ public class ProdutoController {
     }
 
     @GetMapping("/{id}")
-    public ProdutoResponseDTO findById(UUID id) {
+    public ProdutoResponseDTO findById(@PathVariable UUID id) {
         return produtoService.findById(id);
     }
 
     @GetMapping("/filtro")
     public Page<ProdutoResponseDTO> findByFiltro(
-            String filtro,
-            @PageableDefault(size = 20) Pageable pageable) {
+            @RequestParam(defaultValue = "") String filtro,
+            @PageableDefault(size = 20, sort = "nome") Pageable pageable) {
         return produtoService.findByFiltro(filtro, pageable);
     }
 
@@ -43,12 +44,14 @@ public class ProdutoController {
     }
 
     @PutMapping("/{produtoId}")
-    public ProdutoResponseDTO update(@PathVariable UUID produtoId, @Valid @RequestBody ProdutoRequestDTO produto) {
+    public ProdutoResponseDTO update(
+            @PathVariable UUID produtoId,
+            @Valid @RequestBody ProdutoRequestDTO produto) {
         return produtoService.update(produtoId, produto);
     }
 
-    @DeleteMapping
-    public void delete(UUID produtoId) {
+    @DeleteMapping("/{produtoId}")
+    public void delete(@PathVariable UUID produtoId) {
         produtoService.delete(produtoId);
     }
 }
